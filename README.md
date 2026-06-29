@@ -1,0 +1,86 @@
+# Whole-Body Motion-Tracking RL — Porting a Humanoid Policy to New Hardware
+
+Training a **29-DoF whole-body motion-tracking policy** for a humanoid robot with IsaacGym RL,
+then validating it in sim2sim before real deployment. This repository documents the
+**engineering and the debugging** behind getting a pipeline that was proven on a Unitree G1 to
+work on a different 29-DoF humanoid — the dataset construction, the training setup, and the
+hard-won fixes that actually decided whether the policy learned anything.
+
+> **Scope of this repository.** A portfolio account of my own engineering, built on top of the
+> open **TWIST2** framework ([arXiv 2511.02832](https://arxiv.org/abs/2511.02832)) and a
+> colleague's stable environment scaffold. It documents *method and lessons*; the trained
+> policy weights, the robot's proprietary assets, and the exact production data recipe are
+> **not** included (this is commissioned work — see [What is not included](#what-is-not-included)).
+> The deployment side (real-robot server, sim2sim-over-DDS) is a separate repository.
+
+---
+
+## What this covers
+
+A validated whole-body-tracking RL pipeline existed for the Unitree G1. The task was to bring
+it to a different 29-DoF humanoid and produce a policy good enough to deploy. End to end:
+
+1. **Pilot on G1** — reproduce a teacher→student whole-body-tracking pipeline on G1 to confirm
+   the method and the sim2sim gate before touching new hardware.
+2. **Port to the new robot** — 29-DoF freeze, joint-order/limit reconciliation across URDF ↔
+   MJCF, environment + mimic config, and a pkl motion converter.
+3. **Build the motion dataset** — retarget public motion (AMASS, OMOMO) and combine it with
+   self-captured VR teleoperation motion; curate out bad clips (self-collision, foot-sliding,
+   waist-twist); fill the key-body targets.
+4. **Train** — IsaacGym (legged_gym / rsl_rl), export to ONNX.
+5. **Gate** — a sim2sim parity check (no-fall standing, turning-gait tracking, dynamic
+   transitions) decides which policy is allowed near hardware.
+
+## Engineering insights (the interesting part)
+
+The pipeline was the easy half. These are the problems that actually gated progress —
+write-ups in [`docs/INSIGHTS.md`](docs/INSIGHTS.md):
+
+- **A silent double-rotation bug** in my own retargeting code that made the policy unable to
+  learn key-body tracking — diagnosed from a reward curve that was flat from iteration 0.
+- **Cross-version pickle incompatibility** (`numpy 2` save ↔ `numpy 1.23` load) that broke the
+  dataset loader, fixed by a re-serialization pass.
+- **Nondeterministic segfaults** traced to a *faulty CPU core*, not the code — caught with a
+  determinism probe, resolved by a hardware swap.
+- **A plausible-but-wrong hypothesis, disproved by measurement** (ground-contact "chatter"
+  blamed on a stiff floor `solref`; controlled A/B showed it was not the cause).
+- **Standing-pose augmentation** to cure idle jitter the policy never learned.
+- **Two-environment isolation** (mine vs. a known-good baseline) to localize a regression to a
+  single asset/parameter difference.
+
+The work ended with **five trained policy variants** from a controlled, one-variable-at-a-time
+study (the adopted one passed the sim2sim gate); the design, the variants, and why training
+loss was *not* the selection criterion are in [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md).
+
+See also [`docs/DATA_PIPELINE.md`](docs/DATA_PIPELINE.md) (dataset construction & curation) and
+[`docs/POLICY_IO.md`](docs/POLICY_IO.md) (the observation/action contract, so the work is
+legible without the weights).
+
+## Tech stack
+
+IsaacGym · legged_gym / rsl_rl · PyTorch (training) · ONNX (export) · MuJoCo (sim2sim) ·
+Redis · GMR (retargeting) · PICO / XRoboToolkit (VR capture)
+
+## What is not included
+
+This is commissioned work; proprietary and bulky artifacts are referenced or withheld:
+
+| not included | reason |
+|---|---|
+| Trained policy weights | research deliverable / IP (interface in `docs/POLICY_IO.md`) |
+| Robot URDF / MJCF / meshes | manufacturer/team assets — not mine to redistribute |
+| Exact production data recipe | the precise public-vs-VR mix ratio is proprietary; only the *principle* is described |
+| Internal infrastructure | remote GPU hosts, addresses, credentials — excluded |
+| Motion datasets / checkpoints | large; AMASS/OMOMO are obtained from their own sources |
+
+## Credits
+
+Base framework: **TWIST2** (open). The environment scaffold and a stable reference
+configuration came from a colleague's repository; the trained weights here are not theirs — the
+policies were trained from scratch on my own dataset. IsaacGym, GMR, AMASS, and OMOMO are the
+respective projects' work.
+
+## License
+
+MIT (see `LICENSE`). Inline notes in original code are in Korean; documentation here is in
+English.

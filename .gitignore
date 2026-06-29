@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+# Not committed: weights, datasets, checkpoints, robot assets (see README "What is not included")
+*.onnx
+*.pt
+*.pth
+*.pkl
+*.npz
+# robot assets come from the team/manufacturer, not this repo
+assets/
+meshes/
+# logs
+logs/
+wandb/
