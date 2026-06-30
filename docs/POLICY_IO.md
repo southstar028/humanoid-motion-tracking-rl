@@ -1,8 +1,9 @@
 # Policy I/O contract
 
-Trained weights are not included (commissioned research output). This is the interface the
-trained policy exposes, so the training setup is legible without the weights and the result is
-consistent with the deployment side.
+The adopted policy's weights are not included (commissioned research output); two alternative-
+reward baselines (`C1`, `C2`) are provided under [`../onnx/`](../onnx/) and run against this
+contract. This is the interface every policy here exposes, so the training setup is legible
+even where the weights are withheld, and the result is consistent with the deployment side.
 
 - **Format** — ONNX (exported from the IsaacGym/rsl_rl checkpoint), run on CPU at deployment.
 - **Observation** — `1432`-dim (proprioception + tracking-reference / mimic features).

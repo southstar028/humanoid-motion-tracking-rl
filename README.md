@@ -8,9 +8,11 @@ hard-won fixes that actually decided whether the policy learned anything.
 
 > **Scope of this repository.** A portfolio account of my own engineering, built on top of the
 > open **TWIST2** framework ([arXiv 2511.02832](https://arxiv.org/abs/2511.02832)) and a
-> colleague's stable environment scaffold. It documents *method and lessons*; the trained
-> policy weights, the robot's proprietary assets, and the exact production data recipe are
-> **not** included (this is commissioned work — see [What is not included](#what-is-not-included)).
+> colleague's stable environment scaffold. It documents *method and lessons*. Two alternative-
+> reward baseline policies (`C1`, `C2`) are included under [`onnx/`](onnx/) as runnable
+> reference; the adopted policy's weights, the robot's proprietary assets, and the exact
+> production data recipe are **not** included (this is commissioned work — see
+> [What is not included](#what-is-not-included)).
 > The deployment side (real-robot server, sim2sim-over-DDS) is a separate repository.
 
 ---
@@ -67,7 +69,7 @@ This is commissioned work; proprietary and bulky artifacts are referenced or wit
 
 | not included | reason |
 |---|---|
-| Trained policy weights | research deliverable / IP (interface in `docs/POLICY_IO.md`) |
+| Adopted & A-series policy weights | research deliverable / IP — the two alt-reward baselines (`C1`, `C2`) *are* included under `onnx/`; interface in `docs/POLICY_IO.md` |
 | Robot URDF / MJCF / meshes | manufacturer/team assets — not mine to redistribute |
 | Exact production data recipe | the precise public-vs-VR mix ratio is proprietary; only the *principle* is described |
 | Internal infrastructure | remote GPU hosts, addresses, credentials — excluded |

@@ -18,17 +18,22 @@ single variable — see `INSIGHTS.md` (“isolate one variable”).
   holding reward/weights fixed.
 
 ## The five policies
-| tag | variant | outcome |
-|---|---|---|
-| **A1** | hip-weight emphasis | comparison |
-| **A2** | waist-weight emphasis | comparison |
-| **A3** | waist + hip (both) | **adopted** — passed the sim2sim gate; deployed policy |
-| **C1** | alt-reward, longer distillation | comparison |
-| **C2** | alt-reward, shorter distillation | fell during the turning gait → rejected |
-| *(pre-transfer)* | baseline before this port | reference only |
+Each policy has a behavior clip (sim2sim render, unlisted YouTube). ONNX weights for the two
+alternative-reward baselines (`C1`, `C2`) are included under [`onnx/`](../onnx/) as runnable
+reference; the A-series and the adopted policy are withheld (IP).
 
-All export to ONNX (obs 1432 / action 29, action_scale 0.25); see `POLICY_IO.md`. Weights are
-withheld (commissioned IP) — this documents *which experiments produced what*, not the weights.
+| tag | variant | outcome | clip | weights |
+|---|---|---|---|---|
+| **A1** | hip-weight emphasis | comparison | [▶ clip](https://youtu.be/iiOMQr-a9AY) | withheld |
+| **A2** | waist-weight emphasis | comparison | [▶ clip](https://youtu.be/4fY-QMg_2xI) | withheld |
+| **A3** | waist + hip (both) | **adopted** — passed the sim2sim gate; deployed policy | [▶ clip](https://youtu.be/4Y55sW4e17w) | withheld |
+| **C1** | alt-reward, longer distillation | comparison | [▶ clip](https://youtu.be/AxSlId43vZU) | [`onnx/C1_mfg_stu40k_10k.onnx`](../onnx/) |
+| **C2** | alt-reward, shorter distillation | fell during the turning gait → rejected | [▶ clip](https://youtu.be/FXMSjhw95A8) | [`onnx/C2_mfg_stu30k_10k.onnx`](../onnx/) |
+| *(pre-transfer)* | baseline before this port | reference only | — | withheld |
+
+All export to ONNX (obs 1432 / action 29, action_scale 0.25); see `POLICY_IO.md`. The included
+`C1`/`C2` weights are runnable against the I/O contract; the adopted policy and the A-series
+weights are withheld (commissioned IP). This documents *which experiments produced what*.
 
 ## Adoption criterion (the gate, not the loss)
 A policy was “good” only if it passed the **sim2sim parity gate** — 60 s standing with no fall
