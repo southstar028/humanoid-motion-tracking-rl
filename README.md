@@ -58,6 +58,25 @@ See also [`docs/DATA_PIPELINE.md`](docs/DATA_PIPELINE.md) (dataset construction 
 [`docs/POLICY_IO.md`](docs/POLICY_IO.md) (the observation/action contract, so the work is
 legible without the weights).
 
+## Demo — policy behavior (sim2sim)
+
+Each trained variant runs the same reference motion in the IGRIS-C MuJoCo model, shown as a
+side-by-side sim2sim view. The adopted, deployed policy is **A3**. Click a thumbnail to play the
+clip on YouTube.
+
+[![A3 — waist + hip emphasis, adopted](media/posters/A3_wh2_adopted.jpg)](https://youtu.be/4Y55sW4e17w)
+
+**A3 — waist + hip emphasis · adopted, passed the sim2sim gate**
+
+| | |
+|---|---|
+| [![A1](media/posters/A1_hip.jpg)](https://youtu.be/iiOMQr-a9AY)<br>**A1** — hip-weight emphasis | [![A2](media/posters/A2_waist.jpg)](https://youtu.be/4fY-QMg_2xI)<br>**A2** — waist-weight emphasis |
+| [![C1](media/posters/C1_mfg40k.jpg)](https://youtu.be/AxSlId43vZU)<br>**C1** — alt-reward, longer distillation | [![C2](media/posters/C2_mfg30k.jpg)](https://youtu.be/FXMSjhw95A8)<br>**C2** — alt-reward, shorter (fell on the turning gait) |
+
+> The cropped source clips are also committed under [`media/`](media/); GitHub does not play a
+> committed `.mp4` inline from a raw link, so for a true in-page player drag the file into the
+> GitHub web editor (it re-hosts it as a playable asset). The YouTube links above always work.
+
 ## Tech stack
 
 IsaacGym · legged_gym / rsl_rl · PyTorch (training) · ONNX (export) · MuJoCo (sim2sim) ·
