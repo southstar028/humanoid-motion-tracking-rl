@@ -8,7 +8,7 @@ Runnable policy weights for the two **alternative-reward baselines** from the co
 | `C1_mfg_stu40k_10k.onnx` | C1 | alt-reward, longer teacher→student distillation |
 | `C2_mfg_stu30k_10k.onnx` | C2 | alt-reward, shorter distillation (fell on the turning gait) |
 
-These are provided as **reference policies** that exercise the I/O contract end to end. The
+These are provided as **runnable example policies** that exercise the I/O contract end to end. The
 A-series (`A1`/`A2`/`A3`) and the **adopted** deployed policy are withheld (commissioned IP).
 The files contain inference weights only — no training data, optimizer state, or reward recipe.
 
